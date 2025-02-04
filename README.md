@@ -14,9 +14,14 @@ Located in the `acme` directory, this plugin enables automated DNS validation wi
 
 Each tool or script may have its own specific requirements. Please refer to the README file in each directory for detailed requirements and setup instructions.
 
-## Installation
+## Quick Start
 
-Navigate to the specific tool's directory and follow the installation instructions in its README file.
+### Install ACME DNS Plugin
+```bash
+curl -s https://raw.githubusercontent.com/digitalservicesstephan/scripts/main/acme/installer.sh | sudo bash
+```
+
+For manual installation or other tools, navigate to the specific tool's directory and follow the installation instructions in its README file.
 
 ## API Endpoint
 

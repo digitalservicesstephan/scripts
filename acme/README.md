@@ -11,9 +11,15 @@ This plugin enables automated DNS validation with [acme.sh](https://github.com/a
 
 ## Installation
 
-Run the installer script with root privileges:
-
+Quick install using curl:
 ```bash
+curl -s https://raw.githubusercontent.com/digitalservicesstephan/scripts/main/acme/installer.sh | sudo bash
+```
+
+Or download and run the installer manually:
+```bash
+curl -O https://raw.githubusercontent.com/digitalservicesstephan/scripts/main/acme/installer.sh
+chmod +x installer.sh
 sudo ./installer.sh
 ```
 
