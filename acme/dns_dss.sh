@@ -26,13 +26,10 @@ _add_txt_record() {
     local name="$2"
     local value="$3"
     
-    local body="{\"name\":\"${name}.\",\"type\":\"TXT\",\"content\":\"${value}\",\"ttl\":60}"
-    echo "Request body for adding TXT record: ${body}"
-    
     curl -s -X POST \
         -H "Authorization: ApiKey ${DSS_API_KEY}" \
         -H "Content-Type: application/json" \
-        -d "${body}" \
+        -d "{\"name\":\"${name}.\",\"type\":\"TXT\",\"content\":\"${value}\",\"ttl\":60}" \
         "${API_ENDPOINT}/dns/${zone_id}/records"
 }
 
@@ -69,18 +66,16 @@ dns_dss_add() {
     
     # Add TXT record
     local response
-    response=$(_add_txt_record "${zone_id}" "${full_domain}" "\\"${txt_value}\\"")
-    
-    echo "API Response for adding TXT record: ${response}"
-    
+    response=$(_add_txt_record "${zone_id}" "${full_domain}" "\\\"${txt_value}\\\"")
+
     if echo "${response}" | grep -q "error"; then
         echo "Error adding TXT record: ${response}"
         return 1
     fi
     
     # Allow time for DNS propagation
-    echo "Waiting 10 seconds for DNS propagation..."
-    sleep 10
+    echo "Waiting 30 seconds for DNS propagation..."
+    sleep 30
     
     return 0
 }

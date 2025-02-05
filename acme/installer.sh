@@ -84,6 +84,16 @@ update_proxmox_schema() {
     if [ $? -eq 0 ]; then
         mv "$temp_file" "$schema_file"
         chmod 644 "$schema_file"
+        
+        # Restart services after schema update
+        if systemctl list-unit-files pveproxy.service &>/dev/null; then
+            echo "Restarting Proxmox VE services..."
+            systemctl restart pveproxy.service
+            systemctl restart pvedaemon.service
+        elif systemctl list-unit-files pmgproxy.service &>/dev/null; then
+            echo "Restarting Proxmox Mail Gateway service..."
+            systemctl restart pmgproxy.service
+        fi
     else
         rm "$temp_file"
         echo "Error: Failed to update Proxmox schema file" 1>&2
