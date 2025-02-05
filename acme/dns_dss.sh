@@ -18,7 +18,7 @@ _get_zone_id() {
         -H "Authorization: ApiKey ${DSS_API_KEY}" \
         "${API_ENDPOINT}/dns")
     
-    echo "$response" | jq -r ".zones[] | select(.name == \"${domain}\") | .id"
+    echo "$response" | jq -r ".zones[] | select(.name == \"${domain}.\") | .id"
 }
 
 _add_txt_record() {
@@ -29,7 +29,7 @@ _add_txt_record() {
     curl -s -X POST \
         -H "Authorization: ApiKey ${DSS_API_KEY}" \
         -H "Content-Type: application/json" \
-        -d "{\"name\":\"${name}\",\"type\":\"TXT\",\"content\":\"${value}\",\"ttl\":60}" \
+        -d "{\"name\":\"${name}.\",\"type\":\"TXT\",\"content\":\"${value}\",\"ttl\":60}" \
         "${API_ENDPOINT}/dns/${zone_id}/records"
 }
 
@@ -40,7 +40,7 @@ _remove_txt_record() {
     curl -s -X DELETE \
         -H "Authorization: ApiKey ${DSS_API_KEY}" \
         -H "Content-Type: application/json" \
-        -d "{\"type\":\"TXT\",\"name\":\"${name}\"}" \
+        -d "{\"type\":\"TXT\",\"name\":\"${name}.\"}" \
         "${API_ENDPOINT}/dns/${zone_id}/records"
 }
 
@@ -64,9 +64,9 @@ dns_dss_add() {
         return 1
     fi
     
-    # Extract record name (remove base domain from full domain)
+    # Extract record name (keeping the domain and adding trailing dot)
     local record_name
-    record_name=$(echo "${full_domain}" | sed "s/\.${domain}$//")
+    record_name="_acme-challenge.${domain}"
     
     # Add TXT record
     local response
@@ -101,9 +101,9 @@ dns_dss_rm() {
         return 1
     fi
     
-    # Extract record name (remove base domain from full domain)
+    # Extract record name (keeping the domain and adding trailing dot)
     local record_name
-    record_name=$(echo "${full_domain}" | sed "s/\.${domain}$//")
+    record_name="_acme-challenge.${domain}"
     
     # Remove TXT record
     local response
