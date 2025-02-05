@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#!/bin/bash
-
 # DSS ACME DNS API installer
 # This script installs the DSS DNS API integration for acme.sh
 
@@ -13,13 +11,13 @@ check_requirements() {
     if [ "$(uname -s)" != "Linux" ]; then
         echo "Error: This installer only supports Linux systems" 1>&2
         exit 1
-    }
+    fi
 
     # Check if running as root
     if [ "$(id -u)" != "0" ]; then
         echo "Error: This script must be run as root" 1>&2
         exit 1
-    }
+    fi
 
     # Check for required commands
     for cmd in curl grep sed mkdir chmod jq; do
