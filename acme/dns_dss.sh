@@ -64,13 +64,9 @@ dns_dss_add() {
         return 1
     fi
     
-    # Extract record name (keeping the domain and adding trailing dot)
-    local record_name
-    record_name="_acme-challenge.${domain}"
-    
     # Add TXT record
     local response
-    response=$(_add_txt_record "${zone_id}" "${record_name}" "${txt_value}")
+    response=$(_add_txt_record "${zone_id}" "${full_domain}" "\\"${txt_value}\\"")
     
     if echo "${response}" | grep -q "error"; then
         echo "Error adding TXT record: ${response}"
@@ -101,13 +97,9 @@ dns_dss_rm() {
         return 1
     fi
     
-    # Extract record name (keeping the domain and adding trailing dot)
-    local record_name
-    record_name="_acme-challenge.${domain}"
-    
     # Remove TXT record
     local response
-    response=$(_remove_txt_record "${zone_id}" "${record_name}")
+    response=$(_remove_txt_record "${zone_id}" "${full_domain}")
     
     if echo "${response}" | grep -q "error"; then
         echo "Error removing TXT record: ${response}"
