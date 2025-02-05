@@ -56,6 +56,41 @@ detect_environment() {
     fi
 }
 
+# Function to update Proxmox schema
+update_proxmox_schema() {
+    local schema_file="/usr/share/proxmox-acme/dns-challenge-schema.json"
+    if [ ! -f "$schema_file" ]; then
+        echo "Error: Proxmox ACME schema file not found" 1>&2
+        exit 1
+    fi
+
+    # Create a temporary file
+    local temp_file=$(mktemp)
+
+    # Add DSS plugin to schema if not already present
+    jq '. + {
+        "dss": {
+            "fields": {
+                "DSS_API_KEY": {
+                    "description": "DSS API Key for DNS authentication",
+                    "type": "string"
+                }
+            },
+            "name": "DSS DNS"
+        }
+    }' "$schema_file" > "$temp_file"
+
+    # Check if jq command was successful
+    if [ $? -eq 0 ]; then
+        mv "$temp_file" "$schema_file"
+        chmod 644 "$schema_file"
+    else
+        rm "$temp_file"
+        echo "Error: Failed to update Proxmox schema file" 1>&2
+        exit 1
+    fi
+}
+
 # Perform system checks before proceeding
 echo "Checking system requirements..."
 check_requirements
@@ -84,6 +119,12 @@ echo "Downloading DSS DNS API script..."
 curl -s -o "${DNSAPI_DIR}/dns_dss.sh" \
     "https://raw.githubusercontent.com/digitalservicesstephan/scripts/main/acme/dns_dss.sh"
 chmod +x "${DNSAPI_DIR}/dns_dss.sh"
+
+# Update Proxmox schema if in Proxmox environment
+if [ "$IS_PROXMOX" = true ]; then
+    echo "Updating Proxmox ACME schema..."
+    update_proxmox_schema
+fi
 
 echo
 echo "Installation complete!"
