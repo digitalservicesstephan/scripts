@@ -26,10 +26,13 @@ _add_txt_record() {
     local name="$2"
     local value="$3"
     
+    local body="{\"name\":\"${name}.\",\"type\":\"TXT\",\"content\":\"${value}\",\"ttl\":60}"
+    echo "Request body for adding TXT record: ${body}"
+    
     curl -s -X POST \
         -H "Authorization: ApiKey ${DSS_API_KEY}" \
         -H "Content-Type: application/json" \
-        -d "{\"name\":\"${name}.\",\"type\":\"TXT\",\"content\":\"${value}\",\"ttl\":60}" \
+        -d "${body}" \
         "${API_ENDPOINT}/dns/${zone_id}/records"
 }
 
