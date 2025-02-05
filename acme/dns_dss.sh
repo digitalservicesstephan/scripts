@@ -68,6 +68,8 @@ dns_dss_add() {
     local response
     response=$(_add_txt_record "${zone_id}" "${full_domain}" "\\"${txt_value}\\"")
     
+    echo "API Response for adding TXT record: ${response}"
+    
     if echo "${response}" | grep -q "error"; then
         echo "Error adding TXT record: ${response}"
         return 1
@@ -100,6 +102,8 @@ dns_dss_rm() {
     # Remove TXT record
     local response
     response=$(_remove_txt_record "${zone_id}" "${full_domain}")
+    
+    echo "API Response for removing TXT record: ${response}"
     
     if echo "${response}" | grep -q "error"; then
         echo "Error removing TXT record: ${response}"
